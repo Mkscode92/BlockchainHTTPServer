@@ -1,0 +1,22 @@
+Want to wait for an incoming connection
+because its a server -> accept 
+connections/data indefintely 
+-> respond to the data 
+
+Need TCP/IP socket -> term for 
+something you can connect to. 
+A way to speak to other programs 
+using standard Unix file descriptors. 
+Abstraction of a file. 
+
+In the socket(), the domain param 
+is very import because it specifies
+a communication domain. Can select 
+TCP/IP.
+Domain = AF_INET IPv4 Internet protocols ip(7)
+SOCK_STREAM = TCP 
+SOCK_DGRAM = UDP
+
+Need to associate socket with a port on my LM. 
+
+
