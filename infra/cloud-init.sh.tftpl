@@ -1,0 +1,31 @@
+#!/bin/bash
+# Runs once on first boot: build the server and run it as a systemd service.
+set -euxo pipefail
+
+apt-get update
+apt-get install -y gcc git
+
+useradd --system --home /opt/blockchainhttpserver --shell /usr/sbin/nologin blockchainhttpserver || true
+git clone --branch ${branch} --depth 1 ${repo_url} /opt/blockchainhttpserver
+cd /opt/blockchainhttpserver
+gcc -Wall -pthread -o server server.c blockchain.c -lm
+chown -R blockchainhttpserver:blockchainhttpserver /opt/blockchainhttpserver
+
+cat >/etc/systemd/system/blockchainhttpserver.service <<'EOF'
+[Unit]
+Description=BlockchainHTTPServer blockchain API
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=blockchainhttpserver
+WorkingDirectory=/opt/blockchainhttpserver
+ExecStart=/opt/blockchainhttpserver/server
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl daemon-reload
+systemctl enable --now blockchainhttpserver
